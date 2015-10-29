@@ -2,6 +2,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ include file="../../header.jsp" %>
 
+
+
 				<div id="leftBox" > 
 				
 					<div id="bcbMainButtons" class="basicCentralPanelBar">
@@ -16,23 +18,17 @@
 						</div>
 						
 						<div class="menuBarMain">
-							<img onclick="showNewPannel();" title="New User" class="button dicas" src="img/add.png">
+							<img onclick="showNewPannel();" title="New FOM/SOM" class="button dicas" src="img/add.png">
 						</div>						
 						
 						<div id="newPannel" style="display:none; height:180px; width:95%; margin:0 auto;margin-top:10px;margin-bottom:10px;">
 							<form action="doNewFederation" enctype="multipart/form-data" method="post" id="formPost">
 								<table>
-									<tr>
-										<td class="tableCellFormLeft">Name</td>
-										<td class="tableCellFormRight"> 
-											<input id="fedName" name="federation.name" class="tableCellFormInputText" type="text"/> 
-										</td>
-									</tr>
 
 									<tr>
-										<td class="tableCellFormLeft">Description</td>
+										<td class="tableCellFormLeft">Is public?</td>
 										<td class="tableCellFormRight"> 
-											<input id="fedDescription" name="description" class="tableCellFormInputText" type="text"/> 
+											<input id="fedVisible" name="fedVisible" style="width:10px;" type="checkbox"/> 
 										</td>
 									</tr>
 
@@ -56,16 +52,22 @@
 							<table class="tableForm"  id="example" >
 								<thead>
 									<tr>
-										<th>Name</th>
-										<th>Description</th>
-										<th>FOM File</th>
-										<th>&nbsp;</th>
+										<th style="width:80px;">Name</th>
+										<th style="width:20px;">&nbsp;</th>
+										<th style="width:350px;">Description</th>
+										<th style="width:70px;">FOM File</th>
+										<th style="width:65px;">&nbsp;</th>
 									</tr>
 								</thead>
 								<tbody>
 									<c:forEach var="federation" items="${federationList}">
 										<tr>
 											<td>${federation.name}&nbsp;</td>
+											<td>
+												<c:if test="${ not empty federation.glyph}">
+													<img alt="" class="miniButton dicas" title="Glyph" src="data:image/png;base64,${federation.glyph}"  />
+												</c:if>&nbsp;
+											</td>											
 											<td>${federation.description}&nbsp;</td>
 											<td><a href="showFomFile?idFederation=${federation.idFederation}">${federation.definitionFile}</a></td>
 											<td>

@@ -1,5 +1,5 @@
 
-package cmabreu.scorpio.action;
+package br.com.cmabreu.webomt.action;
 
 import java.io.FileInputStream;
 import java.io.StringReader;
@@ -13,7 +13,7 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 
-import cmabreu.scorpio.misc.PathFinder;
+import br.com.cmabreu.webomt.misc.PathFinder;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.pdf.PdfWriter;

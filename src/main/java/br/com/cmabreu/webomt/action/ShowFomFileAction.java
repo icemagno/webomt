@@ -7,6 +7,7 @@ import java.util.List;
 import javax.xml.bind.DatatypeConverter;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 
@@ -30,7 +31,8 @@ import br.com.cmabreu.webomt.wrapper.FomWrapper;
 import br.com.cmabreu.webomt.wrapper.Helper;
 
 @Action (value = "showFomFile", results = { @Result (location = "fomfile.jsp", name = "ok"),
-		@Result (location = "fomfileAlt.jsp", name = "alternate") } ) 
+		@Result (location = "fomfileAlt.jsp", name = "alternate") } , 
+		interceptorRefs= { @InterceptorRef("seguranca")	 } )  
 
 @ParentPackage("default")
 public class ShowFomFileAction extends BasicActionClass {
@@ -55,7 +57,7 @@ public class ShowFomFileAction extends BasicActionClass {
 			federation = fs.getFederation(idFederation);
 			
 			FOMObjectCreator foc = new FOMObjectCreator();
-			String fomFile = PathFinder.getInstance().getPath() + "/foms/" + federation.getName() + "/" + federation.getDefinitionFile();
+			String fomFile = PathFinder.getInstance().getPath() + "/foms/" + federation.getSerial() + "/" + federation.getDefinitionFile();
 
 			omt = foc.generate(fomFile);
 			
@@ -81,7 +83,7 @@ public class ShowFomFileAction extends BasicActionClass {
 			
 			
 			
-			// TESTE INCLUSAO INTERA��O
+			// TESTE INCLUSAO INTERAÇÂO
 			InteractionsType it = omt.getInteractions();
 			InteractionClass ic = it.getInteractionClass();
 
@@ -90,6 +92,9 @@ public class ShowFomFileAction extends BasicActionClass {
 			
 			List<Parameter> params = new ArrayList<Parameter>();
 			params.add(param1);
+			params.add(param2);
+			params.add(param2);
+			params.add(param2);
 			params.add(param2);
 			
 			InteractionClass newIc = Helper.createInteraction("Criado Manualmente", SharingEnumerations.PUBLISH_SUBSCRIBE,

@@ -3,6 +3,7 @@ package br.com.cmabreu.webomt.persistence.services;
 import java.util.List;
 
 import br.com.cmabreu.webomt.persistence.entity.Federation;
+import br.com.cmabreu.webomt.persistence.entity.User;
 import br.com.cmabreu.webomt.persistence.exceptions.DatabaseConnectException;
 import br.com.cmabreu.webomt.persistence.exceptions.InsertException;
 import br.com.cmabreu.webomt.persistence.exceptions.NotFoundException;
@@ -23,16 +24,15 @@ public class FederationService {
 	}
 
 	public int insertFederation(Federation federation) throws InsertException {
-		rep.insertFederation( federation );
-		return 0;
+		return rep.insertFederation( federation );
 	}
 	
 	public void insertFederationList( List<Federation> federations ) throws InsertException {
 		rep.insertFederationList( federations );
 	}
 	
-	public List<Federation> getList( ) throws NotFoundException {
-		List<Federation> federations = rep.getList( );
+	public List<Federation> getList( User owner ) throws NotFoundException {
+		List<Federation> federations = rep.getList( owner );
 		return federations;
 	}
 

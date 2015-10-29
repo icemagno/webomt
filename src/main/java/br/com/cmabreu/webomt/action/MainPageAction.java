@@ -4,6 +4,7 @@ package br.com.cmabreu.webomt.action;
 import java.util.List;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 
@@ -12,7 +13,8 @@ import br.com.cmabreu.webomt.persistence.exceptions.DatabaseConnectException;
 import br.com.cmabreu.webomt.persistence.exceptions.NotFoundException;
 import br.com.cmabreu.webomt.persistence.services.FederationService;
 
-@Action (value = "mainPage", results = { @Result (location = "mainPage.jsp", name = "ok") } ) 
+@Action (value = "mainPage", results = { @Result (location = "mainPage.jsp", name = "ok") },
+interceptorRefs= { @InterceptorRef("seguranca")	 }) 
 
 @ParentPackage("default")
 public class MainPageAction extends BasicActionClass {
@@ -22,7 +24,7 @@ public class MainPageAction extends BasicActionClass {
 	public String execute () {
 		try {
 			FederationService fs = new FederationService();
-			federationList = fs.getList();
+			federationList = fs.getList( getLoggedUser() );
 		} catch (DatabaseConnectException | NotFoundException e) {
 		}
 

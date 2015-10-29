@@ -2,10 +2,16 @@ package br.com.cmabreu.webomt.persistence.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.ForeignKey;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 
 @Entity
@@ -17,8 +23,22 @@ public class Federation {
 	@Column(name="id_federation")
 	private int idFederation;
 
-	@Column(length=150, unique=true)
+	@ManyToOne
+	@JoinColumn(name="id_user", foreignKey = @ForeignKey(name = "fk_fed_user"))
+	@Fetch(FetchMode.JOIN)
+	private User owner;
+	
+	@Column
+	private Boolean visible = false;
+	
+	@Column(length=150)
 	private String name;
+
+	@Column(length=15, unique=true)
+	private String serial;
+
+	@Column(columnDefinition = "TEXT")
+	private String glyph;
 
 	@Column(length=250)
 	private String description;
@@ -58,5 +78,40 @@ public class Federation {
 		this.description = description;
 	}
 	
+	public void setOwner(User owner) {
+		this.owner = owner;
+	}
+	
+	public User getOwner() {
+		return owner;
+	}
 
+	public Boolean isVisible() {
+		return visible;
+	}
+	
+	public void setVisible(Boolean visible) {
+		this.visible = visible;
+	}
+
+	public String getGlyph() {
+		return glyph;
+	}
+
+	public void setGlyph(String glyph) {
+		this.glyph = glyph;
+	}
+
+	public Boolean getVisible() {
+		return visible;
+	}
+	
+	public void setSerial(String serial) {
+		this.serial = serial;
+	}
+	
+	public String getSerial() {
+		return serial;
+	}
+	
 }

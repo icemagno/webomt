@@ -3,6 +3,7 @@ package br.com.cmabreu.webomt.persistence.repository;
 import java.util.List;
 
 import br.com.cmabreu.webomt.persistence.entity.Federation;
+import br.com.cmabreu.webomt.persistence.entity.User;
 import br.com.cmabreu.webomt.persistence.exceptions.DatabaseConnectException;
 import br.com.cmabreu.webomt.persistence.exceptions.InsertException;
 import br.com.cmabreu.webomt.persistence.exceptions.NotFoundException;
@@ -17,13 +18,18 @@ public class FederationRepository extends BasicRepository {
 		logger.debug("init");
 	}
 
-	public List<Federation> getList( ) throws NotFoundException {
+	public List<Federation> getList( User owner ) throws NotFoundException {
 		logger.debug("get list" );
 		DaoFactory<Federation> df = new DaoFactory<Federation>();
 		IDao<Federation> fm = df.getDao(this.session, Federation.class);
 		List<Federation> federations = null;
 		try {
-			federations = fm.getList("select * from federations");
+			String sql = "select * from federations";
+			if ( owner != null ) {
+				sql = "select * from federations where id_user = " + owner.getIdUser(); 				
+			}
+			
+			federations = fm.getList( sql );
 		} catch (Exception e) {
 			closeSession();
 			throw e;
@@ -33,7 +39,7 @@ public class FederationRepository extends BasicRepository {
 		return federations;
 	}
 	
-	public Federation insertFederation(Federation federation) throws InsertException {
+	public int insertFederation(Federation federation) throws InsertException {
 		logger.debug("insert");
 		DaoFactory<Federation> df = new DaoFactory<Federation>();
 		IDao<Federation> fm = df.getDao(this.session, Federation.class);
@@ -48,7 +54,7 @@ public class FederationRepository extends BasicRepository {
 		}
 		closeSession();
 		logger.debug("done");
-		return federation;
+		return federation.getIdFederation();
 	}
 
 	

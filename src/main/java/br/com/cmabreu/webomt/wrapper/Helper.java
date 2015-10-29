@@ -5,6 +5,7 @@ import java.util.List;
 import br.com.cmabreu.webomt.ieee1516e.Attribute;
 import br.com.cmabreu.webomt.ieee1516e.IdentifierType;
 import br.com.cmabreu.webomt.ieee1516e.InteractionClass;
+import br.com.cmabreu.webomt.ieee1516e.NonEmptyString;
 import br.com.cmabreu.webomt.ieee1516e.ObjectClass;
 import br.com.cmabreu.webomt.ieee1516e.OrderEnumerations;
 import br.com.cmabreu.webomt.ieee1516e.OwnershipEnumerations;
@@ -74,6 +75,10 @@ public class Helper {
 		return id.getValue();
 	}
 	
+	public static String fromNonEmptyString( NonEmptyString id ) {
+		return id.getValue();
+	}
+
 	public static IdentifierType getIdentifierType( String value ) {
 		IdentifierType idt = new IdentifierType();
 		idt.setValue( value );

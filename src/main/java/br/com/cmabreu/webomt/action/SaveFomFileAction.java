@@ -4,6 +4,7 @@ package br.com.cmabreu.webomt.action;
 import java.io.PrintWriter;
 
 import org.apache.struts2.convention.annotation.Action;
+import org.apache.struts2.convention.annotation.InterceptorRef;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 
@@ -11,7 +12,8 @@ import br.com.cmabreu.webomt.misc.PathFinder;
 import br.com.cmabreu.webomt.persistence.entity.Federation;
 import br.com.cmabreu.webomt.persistence.services.FederationService;
 
-@Action (value = "saveFomFile", results = { @Result (type="redirect", location = "federations", name = "ok") } ) 
+@Action (value = "saveFomFile", results = { @Result (type="redirect", location = "federations", name = "ok") },
+interceptorRefs= { @InterceptorRef("seguranca")	 }) 
 
 @ParentPackage("default")
 public class SaveFomFileAction extends BasicActionClass {

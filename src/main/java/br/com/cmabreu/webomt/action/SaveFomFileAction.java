@@ -36,6 +36,7 @@ public class SaveFomFileAction extends BasicActionClass {
 			}
 			
 		} catch ( Exception e ) {
+			e.printStackTrace();
 			setMessageText( "Error: " + e.getMessage() );
 		}
 		

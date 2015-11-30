@@ -6,14 +6,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.hibernate.transform.Transformers;
 
+import br.com.cmabreu.webomt.misc.LogManager;
+import br.com.cmabreu.webomt.misc.Logger;
 import br.com.cmabreu.webomt.persistence.exceptions.DeleteException;
 import br.com.cmabreu.webomt.persistence.exceptions.InsertException;
 import br.com.cmabreu.webomt.persistence.exceptions.NotFoundException;

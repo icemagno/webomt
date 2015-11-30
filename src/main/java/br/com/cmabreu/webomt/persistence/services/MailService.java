@@ -9,9 +9,8 @@ import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import br.com.cmabreu.webomt.misc.LogManager;
+import br.com.cmabreu.webomt.misc.Logger;
 import br.com.cmabreu.webomt.misc.UserType;
 import br.com.cmabreu.webomt.persistence.entity.User;
 

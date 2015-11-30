@@ -2,11 +2,11 @@ package br.com.cmabreu.webomt.persistence.repository;
 
 import java.util.UUID;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import br.com.cmabreu.webomt.misc.LogManager;
+import br.com.cmabreu.webomt.misc.Logger;
 import br.com.cmabreu.webomt.persistence.exceptions.DatabaseConnectException;
 import br.com.cmabreu.webomt.persistence.infra.ConnFactory;
 

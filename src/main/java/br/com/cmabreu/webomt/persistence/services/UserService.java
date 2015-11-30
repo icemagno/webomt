@@ -4,9 +4,8 @@ import java.security.MessageDigest;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
+import br.com.cmabreu.webomt.misc.LogManager;
+import br.com.cmabreu.webomt.misc.Logger;
 import br.com.cmabreu.webomt.misc.UserType;
 import br.com.cmabreu.webomt.persistence.entity.User;
 import br.com.cmabreu.webomt.persistence.exceptions.DatabaseConnectException;

@@ -62,7 +62,7 @@ public class ShowFomFileAction extends BasicActionClass {
 			omt = foc.generate(fomFile);
 			
 			// TESTE INCLUSAO OBJETO
-
+			/*
 			ObjectsType ot = omt.getObjects();
 			List<Attribute> attr = new ArrayList<Attribute>();
 			
@@ -103,16 +103,16 @@ public class ShowFomFileAction extends BasicActionClass {
 			ic.getInteractionClass().add( newIc );
 			
 
+			foc.saveFOMFile( omt, "d:/teste.xml" );
+			*/
+			
 			FomWrapper fw = new FomWrapper( omt );
 			objects = fw.getAllObjects();
 			
 			if ( omt.getModelIdentification().getGlyph() != null ) {
 				byte[] bytes = omt.getModelIdentification().getGlyph().getValue();
 				glyphImage = DatatypeConverter.printBase64Binary( bytes );
-			}
-			
-			
-			foc.saveFOMFile( omt, "d:/teste.xml" );
+			}			
 			
 		} catch ( Exception e ) {
 			if ( e.getMessage() != null ) {

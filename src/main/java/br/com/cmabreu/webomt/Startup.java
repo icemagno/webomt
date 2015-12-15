@@ -67,9 +67,9 @@ public class Startup implements ServletContextListener {
 		System.out.println("INIT");
 		
 		try {
-			String path = PathFinder.getInstance().getPath() + "/WEB-INF/lib";
+			//String path = PathFinder.getInstance().getPath() + "/WEB-INF/lib";
 			Map<String, String> newenv = new HashMap<String, String>();
-			newenv.put("RTI_HOME", path);
+			newenv.put("RTI_HOME", "");
 			newenv.put("RTI_RID_FILE", PathFinder.getInstance().getPath() + "/rti.RID" );
 			setEnv( newenv );
 		} catch ( Exception e ) {

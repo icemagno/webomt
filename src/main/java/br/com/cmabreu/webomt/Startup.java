@@ -19,6 +19,10 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import br.com.cmabreu.webomt.misc.PathFinder;
+import br.com.cmabreu.webomt.misc.UserType;
+import br.com.cmabreu.webomt.persistence.entity.User;
+import br.com.cmabreu.webomt.persistence.exceptions.NotFoundException;
+import br.com.cmabreu.webomt.persistence.services.UserService;
 
 @WebListener
 public class Startup implements ServletContextListener {
@@ -62,22 +66,43 @@ public class Startup implements ServletContextListener {
 		}
 	}
 
+	
+	private void checkUser() throws Exception {
+		UserService us = new UserService();
+		try {
+			us.getList().size();
+		} catch (NotFoundException ignored ) {
+			// No users found. We need an Admin!
+			User usr = new User();
+			usr.setFullName("System Administrator");
+			usr.setLoginName("admin");
+			usr.setType( UserType.ADMIN );
+			usr.setPassword("admin");
+			usr.setUserMail("no.mail@localhost");
+			us.newTransaction();
+			us.insertUser(usr);
+		}		
+	}
+	
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		System.out.println("INIT");
 		
 		try {
-			//String path = PathFinder.getInstance().getPath() + "/WEB-INF/lib";
+			checkUser();
+		} catch ( Exception e ) {
+			e.printStackTrace();
+		}
+		
+		
+		try {
 			Map<String, String> newenv = new HashMap<String, String>();
-			newenv.put("RTI_HOME", "");
 			newenv.put("RTI_RID_FILE", PathFinder.getInstance().getPath() + "/rti.RID" );
 			setEnv( newenv );
 		} catch ( Exception e ) {
 			e.printStackTrace();
 		}
 		
-		System.out.println(System.getenv("RTI_HOME"));
-
 		try {
 			System.out.println("getting factory...");
 			RtiFactory factory = RtiFactoryFactory.getRtiFactory();

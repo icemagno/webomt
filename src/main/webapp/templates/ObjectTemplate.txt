@@ -1,0 +1,24 @@
+package br.cefetrj.sagitarii.federation.objects;
+
+import hla.rti1516e.ObjectInstanceHandle;
+
+/**
+ * You MUST replace the HLA attribute types and custom data types 
+ * by the equivalent Java types.
+ * 
+ * Ex: Replace HLAunicodeString by String and etc... 
+ * 
+ */
+public class #OBJ_NAME#Object {
+	private ObjectInstanceHandle instance;
+#OBJ_ATTRIBUTES#
+	
+#OBJ_GETTERS#
+	
+#OBJ_SETTERS#
+	
+	public #OBJ_NAME#Object( ObjectInstanceHandle instance ) {
+		this.instance = instance;
+	}
+	
+}

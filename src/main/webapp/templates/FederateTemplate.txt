@@ -1,0 +1,152 @@
+package br.cefetrj.sagitarii.federation.federates;
+
+import hla.rti1516e.RTIambassador;
+import hla.rti1516e.exceptions.FederatesCurrentlyJoined;
+import hla.rti1516e.exceptions.FederationExecutionAlreadyExists;
+import hla.rti1516e.exceptions.FederationExecutionDoesNotExist;
+
+import java.io.File;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import br.cefetrj.sagitarii.federation.Environment;
+import br.cefetrj.sagitarii.federation.RTIAmbassadorProvider;
+import br.cefetrj.sagitarii.federation.classes.CoreClass;
+import br.cefetrj.sagitarii.federation.classes.SagitariiClass;
+import br.cefetrj.sagitarii.federation.classes.TeapotClass;
+import br.cefetrj.sagitarii.federation.objects.TeapotObject;
+import br.cefetrj.sagitarii.teapot.SystemProperties;
+
+public class TeapotFederate {
+	private Logger logger = LogManager.getLogger( this.getClass().getName() );
+	private String rootPath;
+	
+	private SagitariiClass sagitariiClass;
+	private TeapotClass teapotClass;
+	private CoreClass coreClass;
+
+	public void finishFederationExecution() throws Exception {
+		logger.debug( "Will try to finish Federation execution" );
+		//rtiamb.resignFederationExecution( ResignAction.DELETE_OBJECTS );
+		
+		RTIambassador rtiamb = RTIAmbassadorProvider.getInstance().getRTIAmbassador();
+
+		try	{
+			rtiamb.destroyFederationExecution( "Sagitarii" );
+			logger.debug( "Destroyed Federation" );
+		} catch( FederationExecutionDoesNotExist dne ) {
+			logger.debug( "No need to destroy federation, it doesn't exist" );
+		} catch( FederatesCurrentlyJoined fcj ){
+			logger.debug( "Didn't destroy federation, federates still joined" );
+		}		
+	}
+
+	
+	public TeapotFederate( ) throws Exception {
+		logger.debug("Starting Sagitarii Federation");
+		this.rootPath = SystemProperties.getInstance().getTeapotRootFolder();
+		
+		try {
+
+			Map<String, String> newenv = new HashMap<String, String>();
+			newenv.put("RTI_HOME", "");
+			newenv.put("RTI_RID_FILE", rootPath + "/rti.RID" );
+			Environment.setEnv( newenv );
+			
+			RTIambassador rtiamb = RTIAmbassadorProvider.getInstance().getRTIAmbassador();
+			
+			try	{
+				URL[] modules = new URL[]{
+					    (new File(rootPath + "/foms/HLAstandardMIM.xml")).toURI().toURL()
+				};
+				
+				rtiamb.createFederationExecution("Sagitarii", modules );
+			} catch( FederationExecutionAlreadyExists exists ) {
+				logger.debug("Sagitarii Federation already exists. Bypassing...");
+			}
+			
+			join();
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}		
+		
+	}
+	
+	public void startFederate() throws Exception {
+		logger.debug("starting server...");
+		if ( sagitariiClass == null ) {
+
+			// Publish my attributes
+			// DO NOT SUBSCRIBE OR WILL RECEIVE OTHER TEAPOTS IN A INFINITE LOOP
+			teapotClass = new TeapotClass();
+			teapotClass.publish();
+			// Create one node
+			TeapotObject to = teapotClass.createNew();
+
+			// Subscribe to server updates
+			// and will know when server is down ;-)
+			sagitariiClass = new SagitariiClass();
+			sagitariiClass.subscribe();
+			
+			// Publish Cores attributes
+			// DO NOT SUBSCRIBE OR WILL RECEIVE OTHER CORES IN A INFINITE LOOP
+			coreClass = new CoreClass();
+			coreClass.publish();
+
+			// Will register machine cores into RTI
+			for (int x=0; x < to.getAvailableProcessors(); x++  ) {
+				coreClass.createNew( to.getMacAddress() );		
+			}
+			
+			logger.debug("done.");
+			
+			// Will loop until a keypress ...
+			while ( System.in.available() == 0 ) {
+
+				//teapotClass.updateAttributeValues();
+				//coreClass.updateAttributeValues();
+				
+				try {
+					Thread.sleep(500);
+				} catch (Exception e) {
+					//
+				}				
+			}			
+
+			
+		} else {
+			logger.warn("server is already running an instance");
+		}
+	}
+	
+	public SagitariiClass getSagitariiClass() {
+		return sagitariiClass;
+	}
+	
+	public TeapotClass getTeapotClass() {
+		return teapotClass;
+	}
+	
+	public CoreClass getCoreClass() {
+		return coreClass;
+	}
+	
+	private void join() throws Exception {
+		RTIambassador rtiamb = RTIAmbassadorProvider.getInstance().getRTIAmbassador();
+
+		logger.debug("joing Federation Execution using FOM SagitariiFederation.xml...");
+		URL[] joinModules = new URL[]{
+		    (new File(rootPath +  "/foms/SagitariiFederation.xml")).toURI().toURL()
+		};
+		
+		String mac = SystemProperties.getInstance().getMacAddress();
+		
+		rtiamb.joinFederationExecution( "Teapot Node " + mac, "SagitariiType", "Sagitarii", joinModules );           
+	}
+	
+}

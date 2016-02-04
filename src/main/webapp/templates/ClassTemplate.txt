@@ -1,0 +1,186 @@
+package br.cefetrj.sagitarii.federation.classes;
+
+import hla.rti1516e.AttributeHandle;
+import hla.rti1516e.AttributeHandleSet;
+import hla.rti1516e.AttributeHandleValueMap;
+import hla.rti1516e.ObjectClassHandle;
+import hla.rti1516e.ObjectInstanceHandle;
+import hla.rti1516e.RTIambassador;
+import hla.rti1516e.encoding.HLAboolean;
+import hla.rti1516e.encoding.HLAunicodeString;
+import hla.rti1516e.exceptions.RTIexception;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import br.cefetrj.sagitarii.federation.EncoderDecoder;
+import br.cefetrj.sagitarii.federation.RTIAmbassadorProvider;
+import #OBJ_NAME#Object;
+
+public class #OBJ_NAME#Class {
+	private RTIambassador rtiamb;
+	private ObjectClassHandle classHandle;
+	private AttributeHandle isWorkingHandle;
+	private AttributeHandle serialNumberHandle;
+	private AttributeHandle ownerNodeHandle;
+	
+	private AttributeHandle experimentSerialHandle;
+	private AttributeHandle fragmentSerialHandle;
+	private AttributeHandle instanceSerialHandle;
+	private AttributeHandle activitySerialHandle;
+	
+	private AttributeHandleSet attributes;
+	private List<CoreObject> objects;
+	private EncoderDecoder encodec;
+	private Logger logger = LogManager.getLogger( this.getClass().getName() );
+	
+	public List<CoreObject> getObjects() {
+		return objects;
+	}
+	
+	public ObjectInstanceHandle createNew( String ownerNode ) throws RTIexception {
+		logger.debug("new HLA Object instance to node " + ownerNode );
+		ObjectInstanceHandle coreObjectHandle = rtiamb.registerObjectInstance( classHandle );
+		CoreObject co = new CoreObject( coreObjectHandle );
+		co.setOwnerNode(ownerNode);
+		objects.add( co );
+		return coreObjectHandle;
+	}
+	
+	public ObjectInstanceHandle createNew( ObjectInstanceHandle coreObjectHandle ) throws RTIexception {
+		objects.add( new CoreObject(coreObjectHandle) );
+		return coreObjectHandle;
+	}
+	
+	public CoreObject reflectAttributeValues( AttributeHandleValueMap theAttributes, ObjectInstanceHandle theObject ) {
+		// Find the Object instance
+		for ( CoreObject object : objects ) {
+			if( object.isMe( theObject) ) {
+				// Update its attributes
+				for( AttributeHandle attributeHandle : theAttributes.keySet() )	{
+					if( attributeHandle.equals( isWorkingHandle) ) {
+						object.setWorking(  encodec.toBoolean( theAttributes.get(attributeHandle) ) );
+					}
+					else if( attributeHandle.equals( experimentSerialHandle ) ) {
+						object.setExperimentSerial( encodec.toString( theAttributes.get(attributeHandle)) );
+					}
+					else if( attributeHandle.equals( fragmentSerialHandle ) ) {
+						object.setFragmentSerial( encodec.toString( theAttributes.get(attributeHandle)) );
+					}
+					else if( attributeHandle.equals( instanceSerialHandle ) ) {
+						object.setInstanceSerial( encodec.toString( theAttributes.get(attributeHandle)) );
+					}
+					else if( attributeHandle.equals( activitySerialHandle ) ) {
+						object.setActivitySerial( encodec.toString( theAttributes.get(attributeHandle)) );
+					}
+					else if( attributeHandle.equals( serialNumberHandle ) ) {
+						object.setSerial( encodec.toString( theAttributes.get(attributeHandle)) );
+					}
+					else if( attributeHandle.equals( ownerNodeHandle ) ) {
+						object.setOwnerNode( encodec.toString( theAttributes.get(attributeHandle)) );
+					}
+				}
+				return object;
+			}
+		}
+		return null;
+	}
+	
+	public void updateWorkingData( CoreObject object ) throws Exception {
+		HLAunicodeString experimentSerialValue = encodec.createHLAunicodeString( object.getExperimentSerial() );
+		HLAunicodeString fragmentSerialValue = encodec.createHLAunicodeString( object.getFragmentSerial() );
+		HLAunicodeString instanceSerialValue = encodec.createHLAunicodeString( object.getInstanceSerial() );
+		HLAunicodeString activitySerialValue = encodec.createHLAunicodeString( object.getActivitySerial() );
+		AttributeHandleValueMap attributes = rtiamb.getAttributeHandleValueMapFactory().create(4);
+		
+		attributes.put( experimentSerialHandle, experimentSerialValue.toByteArray() );
+		attributes.put( fragmentSerialHandle, fragmentSerialValue.toByteArray() );
+		attributes.put( instanceSerialHandle, instanceSerialValue.toByteArray() );
+		attributes.put( activitySerialHandle, activitySerialValue.toByteArray() );
+		
+		rtiamb.updateAttributeValues( object.getHandle(), attributes, "Core Working Data".getBytes() );
+	}
+	
+	public void updateAttributeValues() throws RTIexception {
+
+		for ( CoreObject object : objects  ) {
+			
+			HLAboolean isWorkingValue = encodec.createHLAboolean( object.isWorking() );
+			HLAunicodeString serialNumberValue = encodec.createHLAunicodeString( object.getSerial() );
+			HLAunicodeString ownerNodeValue = encodec.createHLAunicodeString( object.getOwnerNode() );
+
+			AttributeHandleValueMap attributes = rtiamb.getAttributeHandleValueMapFactory().create(3);
+			attributes.put( serialNumberHandle, serialNumberValue.toByteArray() );
+			attributes.put( isWorkingHandle, isWorkingValue.toByteArray() );
+			attributes.put( ownerNodeHandle, ownerNodeValue.toByteArray() );
+			
+			rtiamb.updateAttributeValues( object.getHandle(), attributes, "Core Attributes".getBytes() );
+			
+			// REMOVE THIS ... TEST ONLY
+			try {
+				updateWorkingData( object );
+			} catch ( Exception e ) {
+				e.printStackTrace();
+			}
+			// ==========================
+			
+		}
+		
+	}
+	
+	public boolean objectExists( ObjectInstanceHandle objHandle ) {
+		for ( CoreObject object : objects  ) {
+			if ( object.isMe( objHandle ) ) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public ObjectClassHandle getClassHandle() {
+		return classHandle;
+	}
+	
+	public boolean isSameOf( ObjectClassHandle theObjectClass ) {
+		return theObjectClass.equals( classHandle );
+	}
+	
+	public CoreClass() throws Exception {
+		rtiamb = RTIAmbassadorProvider.getInstance().getRTIAmbassador();
+		this.classHandle = rtiamb.getObjectClassHandle( "HLAobjectRoot.Core" );
+		
+		this.isWorkingHandle = rtiamb.getAttributeHandle( classHandle, "IsWorking" );
+		this.serialNumberHandle = rtiamb.getAttributeHandle( classHandle, "SerialNumber" );
+		this.ownerNodeHandle = rtiamb.getAttributeHandle( classHandle, "OwnerNode" );
+
+		this.experimentSerialHandle = rtiamb.getAttributeHandle( classHandle, "ExperimentSerial" );
+		this.fragmentSerialHandle = rtiamb.getAttributeHandle( classHandle, "FragmentSerial" );
+		this.instanceSerialHandle = rtiamb.getAttributeHandle( classHandle, "InstanceSerial" );
+		this.activitySerialHandle = rtiamb.getAttributeHandle( classHandle, "ActivitySerial" );		
+		
+		this.attributes = rtiamb.getAttributeHandleSetFactory().create();
+		attributes.add( isWorkingHandle );
+		attributes.add( serialNumberHandle );
+		attributes.add( ownerNodeHandle );
+		attributes.add( experimentSerialHandle );
+		attributes.add( fragmentSerialHandle );
+		attributes.add( instanceSerialHandle );
+		attributes.add( activitySerialHandle );
+		
+		objects = new ArrayList<CoreObject>();
+		encodec = new EncoderDecoder();
+	}
+	
+	public void publish() throws RTIexception {
+		logger.debug("publish");
+		rtiamb.publishObjectClassAttributes( classHandle, attributes );
+	}
+	
+	public void subscribe() throws RTIexception {
+		logger.debug("subscribe");
+		rtiamb.subscribeObjectClassAttributes( classHandle, attributes );		
+	}
+
+	
+	
+}

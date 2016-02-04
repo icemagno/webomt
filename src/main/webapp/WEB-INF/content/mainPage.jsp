@@ -26,13 +26,6 @@
 								<table>
 
 									<tr>
-										<td class="tableCellFormLeft">Is public?</td>
-										<td class="tableCellFormRight"> 
-											<input id="fedVisible" name="fedVisible" style="width:10px;" type="checkbox"/> 
-										</td>
-									</tr>
-
-									<tr>
 										<td class="tableCellFormLeft">FOM File</td>
 										<td class="tableCellFormRight"> 
 											<input id="fedFom" name="fomFile" class="tableCellFormInputText" type="file"/> 

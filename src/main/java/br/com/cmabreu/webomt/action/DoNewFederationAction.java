@@ -50,7 +50,7 @@ public class DoNewFederationAction extends BasicActionClass {
 	     	File destFile  = new File(destPath, fomFileFileName);
 	    	FileUtils.copyFile(fomFile, destFile);	     	 
 		
-//	    	System.out.println( destPath );
+	    	System.out.println( destPath );
 	    	
 			FOMObjectCreator foc = new FOMObjectCreator();
 			String fomFile = destPath + fomFileFileName;
@@ -66,7 +66,7 @@ public class DoNewFederationAction extends BasicActionClass {
 	    	federation.setSerial(serial);
 	    	federation.setName( Helper.fromNonEmptyString( omt.getModelIdentification().getName() ) );
 	    	federation.setOwner( getLoggedUser() );
-    		federation.setVisible( fedVisible.equals("on") );
+    		federation.setVisible( true );
 	    	
 			FederationService fs = new FederationService();
 			int idFederation = fs.insertFederation(federation);
@@ -76,6 +76,7 @@ public class DoNewFederationAction extends BasicActionClass {
 			return "ok";
 			
 		} catch ( Exception e ) {
+			e.printStackTrace();
 			setMessageText("Error : " + e.getMessage() );
 			return "error";
 		}

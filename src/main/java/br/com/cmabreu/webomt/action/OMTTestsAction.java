@@ -18,12 +18,12 @@ import br.com.cmabreu.webomt.persistence.services.FederationService;
 import br.com.cmabreu.webomt.wrapper.FomObject;
 import br.com.cmabreu.webomt.wrapper.FomWrapper;
 
-@Action (value = "showFomFile", results = { @Result (location = "fomfile.jsp", name = "ok"),
+@Action (value = "omtTests", results = { @Result (location = "fomfile.jsp", name = "ok"),
 		@Result (location = "fomfileAlt.jsp", name = "alternate") } , 
 		interceptorRefs= { @InterceptorRef("seguranca")	 } )  
 
 @ParentPackage("default")
-public class ShowFomFileAction extends BasicActionClass {
+public class OMTTestsAction extends BasicActionClass {
 	private int idFederation;
 	private Federation federation;
 	private ObjectModelType omt;
@@ -49,8 +49,55 @@ public class ShowFomFileAction extends BasicActionClass {
 
 			omt = foc.generate(fomFile);
 			
+			// TESTE INCLUSAO OBJETO
+			/*
+			ObjectsType ot = omt.getObjects();
+			List<Attribute> attr = new ArrayList<Attribute>();
+			
+			Attribute attr1 = Helper.createAttribute("Attr1", "HLAunicodeString", UpdateEnumerations.STATIC,
+					OwnershipEnumerations.NO_TRANSFER, "NA", SharingEnumerations.PUBLISH_SUBSCRIBE, "HLAreliable",
+					OrderEnumerations.RECEIVE, "Meu atributo de teste");
+			
+			attr.add( attr1 );
+			
+			ObjectClass myObject = Helper.createObject("MyObject","Semantics", SharingEnumerations.PUBLISH_SUBSCRIBE, attr);
+
+			try {
+				ObjectClass myObj = Helper.getObject( ot.getObjectClass(), "Car");
+				myObj.getObjectClass().add( myObject );
+			} catch ( Exception e ) {
+			
+			}
+			
+			
+			
+			// TESTE INCLUSAO INTERAÇÂO
+			InteractionsType it = omt.getInteractions();
+			InteractionClass ic = it.getInteractionClass();
+
+			Parameter param1 = Helper.createParameter("Param1", "HLAunicodeString", "Semantica param1");
+			Parameter param2 = Helper.createParameter("Param2", "HLAunicodeString", "Semantica param2");
+			
+			List<Parameter> params = new ArrayList<Parameter>();
+			params.add(param1);
+			params.add(param2);
+			params.add(param2);
+			params.add(param2);
+			params.add(param2);
+			
+			InteractionClass newIc = Helper.createInteraction("Criado Manualmente", SharingEnumerations.PUBLISH_SUBSCRIBE,
+					"HLAreliable", OrderEnumerations.RECEIVE, "Teste de semantica", params );
+			
+			ic.getInteractionClass().add( newIc );
+			
+
+			foc.saveFOMFile( omt, "d:/teste.xml" );
+			*/
+			
 			FomWrapper fw = new FomWrapper( omt );
 			objects = fw.getAllObjects();
+			
+			
 			
 			if ( omt.getModelIdentification().getGlyph() != null ) {
 				byte[] bytes = omt.getModelIdentification().getGlyph().getValue();
